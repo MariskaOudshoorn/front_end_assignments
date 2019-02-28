@@ -91,7 +91,9 @@ const attractions = [
     }, 
 ]
 
-app.post("/api/attractions", (request, response) => {
+var boughtTickets = [];
+
+app.get("/api/attractions", (request, response) => {
     console.log("Api call received for /attractions");
     response.json(attractions)
 })
@@ -103,6 +105,8 @@ app.post("/api/tickets", (request, response) => {
 
 app.post("/api/placeorder", (request, response) => {
     console.log("Api call received for /placeorder");
+    console.log(request.body);
+    buyTickets(request.body);
     response.sendStatus(200);
 });
 
@@ -117,3 +121,12 @@ app.get("/api/admin/edit", (request, response) => {
 });
 
 app.listen(8000, () => console.log('Example app listening on port 8000!'));
+
+function buyTickets(eventlist){
+    console.log(eventlist);
+    for(var event = 0; event < eventlist.length; event++){
+        eventlist[event] = eventlist[event].toLowerCase();
+        var index = attractions.findIndex(x => x.name.toLowerCase() === eventlist[event]);
+        attractions[index].available = attractions[index].available - 1;
+    }
+}

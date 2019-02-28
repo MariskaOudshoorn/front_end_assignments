@@ -1,3 +1,4 @@
+var nameList = [];
 var storage = localStorage.getItem("event");
 var multipleParks = storage.split(":");
 for(var i =0; i < (multipleParks.length -1); i++){
@@ -5,8 +6,6 @@ for(var i =0; i < (multipleParks.length -1); i++){
 	var parkname = parkInfo[0];
 	var noAdults = parseInt(parkInfo[1]);
 	var noKids = parseInt(parkInfo[2]);
-	console.log(parkname);
-	console.log(noAdults);
 	fillTemplate(parkname, noAdults, noKids);
 }
 
@@ -18,11 +17,39 @@ function fillTemplate(parkname, noAdults, noKids){
 	main.insertBefore(template, finalizepaymentbutton);	
 }
 
-var finalizeButton = document.querySelector(".finalizepaymentbutton");
+function parkNameList(){
+	for(var i =0; i < (multipleParks.length -1); i++){
+		var parkInfo = multipleParks[i].split(",");
+		var parkName = parkInfo[0];
+		nameList.push(parkName);
+	}
+}
+
+var finalizeButton = document.querySelector("#finalizepaymentbutton");
+parkNameList();
 finalizeButton.addEventListener("click", finalizePayment);
 
 function finalizePayment(e){
-	fetch(api/placeorder)
+	fetch("api/placeorder" , {
+			method: 'POST',
+			body: JSON.stringify(nameList),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}).then(function(response){
+			if(!response.ok){
+				throw Error(response.statusText);
+			}
+			return response;
+		}).then(window.location.href = "orderplaced.html")
 		.then(localStorage.clear());
-		then(window.location.href = "orderplaced.html");
+		
 }
+
+fetch("/api/attractions")
+	.then(function(response){
+		return response.json();
+	})
+	.then(function(data){
+		console.log(data);
+	})
