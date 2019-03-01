@@ -25,10 +25,33 @@ function getAttractions(attractions){
 	}
 	var buttonList = document.querySelectorAll(".orderbutton");
 	buttonList.forEach(b => b.addEventListener("click", orderButtonClicked));
+	var ticketAmountList = document.querySelectorAll(".numberofadults, .numberofkids");
+	ticketAmountList.forEach(a => a.addEventListener("keyup", changeTotalDisplay))
+}
+
+function changeTotalDisplay(e){	
+	const order = e.target.parentNode;
+	const adultscat = order.getElementsByClassName("adultprice")[0];
+	const kidscat = order.getElementsByClassName("kidsprice")[0];
+	var adultPrice = parseInt(adultscat.getElementsByClassName("price")[0].innerText);
+	var kidsPrice = parseInt(kidscat.getElementsByClassName("price")[0].innerText);
+	var noAdults = order.getElementsByClassName("numberofadults")[0].value;
+	noAdults = parseInt(noAdults);
+	var noChild = order.getElementsByClassName("numberofkids")[0].value;
+	noChild = parseInt(noChild);
+	var totalPrice = (adultPrice * noAdults) + (kidsPrice * noChild);
+	var minimimAdults = parseInt(order.getElementsByClassName("adults")[0].innerText);
+	var minimumKids = parseInt(order.getElementsByClassName("child")[0].innerText);
+	var discount = parseInt(order.getElementsByClassName("percentage")[0].innerText);
+	if(noAdults >= minimimAdults & noChild >= minimumKids){
+		totalPrice -= (totalPrice * (discount / 100));
+	}
+	var totalClass = order.getElementsByClassName("total")[0];
+	var totalPriceElement = totalClass.getElementsByClassName("price")[0];
+	totalPriceElement.innerText = totalPrice;
 }
 
 function orderButtonClicked(e){
-	console.log("click");
 	var attraction
 	var noAdults
 	var noChildren
@@ -53,5 +76,3 @@ function SaveOrderInShoppingBasket(attraction, noAdults, noChildren){
 	basket.textContent = amountOfItems.toString();
 }
 
-
-//eventlistener op adult/child knoppen als daar wat ingevuld word totaal aanpassen
